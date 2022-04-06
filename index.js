@@ -1,12 +1,23 @@
-import express from "express";
-// import data from "./data/mock.json";
+const express = require('express');
 
 const app = express ();
+var Client = require('node-rest-client').Client;
+
+var client = new Client();
 
 const  PORT = 3000;
+
 // GET
-app.get("/", (request, response) => {
-    response.json(data);
+app.get("/primarystudents", (request, res) => {
+    
+    
+//     client.get("https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=35955b972e7856e5a652caf536cf27e4", function (data, response) {
+// 	// parsed response body as js object
+// 	//console.log(data);
+// 	// raw response
+// 	//console.log(response);
+// });
+res.send("qaz");
 });
 //POST
 app.post("/create", (request, response) => {
