@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "264873607610",
+    "project_id": "hello-disaster",
+    "storage_bucket": "hello-disaster.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264873607610:android:564fac77d42170336f5d83",
+        "android_client_info": {
+          "package_name": "com.example.sdgp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264873607610-nivsjokj8bfbchdea0tav7lukfipc5oe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALeVKGeYXib0J1FOb44-kqFAdEkCZ9ft4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264873607610-nivsjokj8bfbchdea0tav7lukfipc5oe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

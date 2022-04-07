@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,6 +13,7 @@ class SubmitData extends StatefulWidget {
 }
 
 class _SubmitDataState extends State<SubmitData> {
+  var storage = FirebaseStorage.instance;
   File? image;
 
   Future pickImage() async {
@@ -22,6 +24,10 @@ class _SubmitDataState extends State<SubmitData> {
     } else {
       final imagePath = File(image.path);
       setState(() => this.image = imagePath);
+      TaskSnapshot snapshot = await storage
+          .ref()
+          .child("images")
+          .putFile(imagePath);
     }
   }
 
@@ -34,6 +40,10 @@ class _SubmitDataState extends State<SubmitData> {
         ),
         body: Column(
           children: [
+            const Padding(
+              padding: EdgeInsets.all(25.0),
+              child: Text('Here you can submit your own data to report flooding and landslidng in your area.', style: TextStyle(fontSize: 22),),
+            ),
             Text('Upload Images'),
             TextButton(
               onPressed: () => pickImage(),
