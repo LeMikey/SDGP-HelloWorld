@@ -4,6 +4,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
+import 'package:flutter/services.dart';
+
+// Import tflite_flutter
+import 'package:tflite_flutter/tflite_flutter.dart';
+
+
 
 class SubmitData extends StatefulWidget {
   const SubmitData({Key? key}) : super(key: key);
@@ -13,8 +20,19 @@ class SubmitData extends StatefulWidget {
 }
 
 class _SubmitDataState extends State<SubmitData> {
+  FirebaseModelDownloader downloader = FirebaseModelDownloader.instance;
+
   var storage = FirebaseStorage.instance;
   File? image;
+
+  getModel() async {
+    //download the image classification model
+    FirebaseCustomModel model = await FirebaseModelDownloader.instance.getModel('custom_image_classifier', FirebaseModelDownloadType.latestModel);
+    File modelFile = model.file;
+    Interpreter interpreter = Interpreter.fromFile(modelFile);
+    // get ready to run inference.
+
+  }
 
   Future pickImage() async {
     await Permission.camera.request();
@@ -26,13 +44,14 @@ class _SubmitDataState extends State<SubmitData> {
       setState(() => this.image = imagePath);
       TaskSnapshot snapshot = await storage
           .ref()
-          .child("images")
+          .child("images/bro")
           .putFile(imagePath);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    getModel();
     return Scaffold(
         appBar: AppBar(
           title: Text('Submit Data'),
