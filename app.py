@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import numpy as np
 import keras_preprocessing.image as image
+import os
 
 
 app = Flask(__name__)
@@ -12,7 +13,8 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run()
+    server_port = os.environ.get('PORT', '8080')
+    app.run(debug=False, port=server_port, host='0.0.0.0')
 
 
 @app.route('/getImageArr', methods=['GET'])
