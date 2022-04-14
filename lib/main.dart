@@ -28,7 +28,6 @@ class _MyAppState extends State<MyApp> {
     InternetConnectionChecker().onStatusChange.listen((status) {final _connected = status == InternetConnectionStatus.connected;
     setState(() => connected = _connected);
     });
-
   }
 
   @override

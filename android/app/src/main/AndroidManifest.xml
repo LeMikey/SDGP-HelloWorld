@@ -3,7 +3,8 @@
    <application
         android:label="sdgp"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,4 +33,5 @@
             android:value="2" />
     </application>
     <uses-permission android:name="android.permission.CAMERA"></uses-permission>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"></uses-permission>
 </manifest>

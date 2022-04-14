@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sdgp/parseData.dart';
+import 'package:sdgp/Loading.dart';
+
 
 class TodayPage extends StatefulWidget {
   const TodayPage({Key? key}) : super(key: key);
@@ -13,13 +15,15 @@ class TodayPage extends StatefulWidget {
 
 class _TodayPageState extends State<TodayPage> {
   //create an instance of the GetData class and parseData
+  bool loading = true;
   final _dataService = GetData();
-  late WeatherResponse _response;
+  WeatherResponse? _response;
+
+  //check if the weather api sent back a response
 
   @override
   Widget build(BuildContext context) {
-    _search();
-    return Scaffold(
+    return loading? Loading() : Scaffold(
       appBar: AppBar(
         title: const Text('Today'),
         centerTitle: true,
@@ -29,13 +33,13 @@ class _TodayPageState extends State<TodayPage> {
           child: Center(
             child: Column(
               children: [
-                Image.network(_response.iconUrl),
+                Image.network(_response!.iconUrl),
                 Text(
-                  _response.tempInfo.temperature.toString() + '°',
+                  _response!.tempInfo.temperature.toString() + '°',
                   style: TextStyle(fontSize: 40),
                 ),
                 Text(
-                  _response.weatherInfo.description,
+                  _response!.weatherInfo.description,
                   style: TextStyle(fontSize: 25),
                 ),
               ],
@@ -45,9 +49,21 @@ class _TodayPageState extends State<TodayPage> {
   }
 
   void _search() async {
+    setState(() => loading = true);
     final response = await _dataService.getWeather('Colombo');
-    setState(() => _response = response);
+    if(this.mounted){
+      setState(() => _response = response);
+      setState(() => loading = false);
+    }
     print(_response.toString());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() => loading = true);
+    _search();
+
   }
 }
 
@@ -59,8 +75,7 @@ class GetData {
       'units': 'metric'
     };
     // https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
-    final uri = Uri.https(
-        'api.openweathermap.org', '/data/2.5/weather', queryParameters);
+    final uri = Uri.https('api.openweathermap.org', '/data/2.5/weather', queryParameters);
 
     final response = await http.get(uri);
 

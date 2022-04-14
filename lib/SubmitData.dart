@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
 import 'package:flutter/services.dart';
+import 'package:googleapis/ml/v1.dart';
 
 // Import tflite_flutter
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -24,15 +27,19 @@ class _SubmitDataState extends State<SubmitData> {
 
   var storage = FirebaseStorage.instance;
   File? image;
+  File? modelFile;
 
   getModel() async {
     //download the image classification model
     FirebaseCustomModel model = await FirebaseModelDownloader.instance.getModel('custom_image_classifier', FirebaseModelDownloadType.latestModel);
     File modelFile = model.file;
     Interpreter interpreter = Interpreter.fromFile(modelFile);
-    // get ready to run inference.
+    // run inference with the submitted user image
+    var output;
+    interpreter.run(image!, output);
 
   }
+
 
   Future pickImage() async {
     await Permission.camera.request();
@@ -51,7 +58,7 @@ class _SubmitDataState extends State<SubmitData> {
 
   @override
   Widget build(BuildContext context) {
-    getModel();
+    //getModel();
     return Scaffold(
         appBar: AppBar(
           title: Text('Submit Data'),
@@ -68,7 +75,7 @@ class _SubmitDataState extends State<SubmitData> {
               onPressed: () => pickImage(),
               child: Text('Launch Camera'),
             ),
-            image!= null ? Image.file(image!, width: 160, height: 160,) : FlutterLogo()
+            image!= null ? Image.file(image!, width: 160, height: 160,) : Icon(Icons.add_a_photo)
           ],
         ),
 
