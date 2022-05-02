@@ -29,31 +29,27 @@ class _SubmitDataState extends State<SubmitData> {
   File? image;
   File? modelFile;
 
-  getModel() async {
-    //download the image classification model
-    FirebaseCustomModel model = await FirebaseModelDownloader.instance.getModel('custom_image_classifier', FirebaseModelDownloadType.latestModel);
-    File modelFile = model.file;
-    Interpreter interpreter = Interpreter.fromFile(modelFile);
-    // run inference with the submitted user image
-    var output;
-    interpreter.run(image!, output);
-
-  }
-
 
   Future pickImage() async {
     await Permission.camera.request();
-    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) {
       return null;
     } else {
-      final imagePath = File(image.path);
-      setState(() => this.image = imagePath);
-      TaskSnapshot snapshot = await storage
-          .ref()
-          .child("images/bro")
-          .putFile(imagePath);
+      final file = File(image.path);
+      final path = 'images/${image.name}';
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref.putFile(file);
+
+
+      // setState(() => this.image = imagePath);
+      // TaskSnapshot snapshot = await storage
+      //     .ref()
+      //     .child("images/bro")
+      //     .putFile(imagePath);
+
     }
+
   }
 
   @override
@@ -70,12 +66,18 @@ class _SubmitDataState extends State<SubmitData> {
               padding: EdgeInsets.all(25.0),
               child: Text('Here you can submit your own data to report flooding and landslidng in your area.', style: TextStyle(fontSize: 22),),
             ),
-            Text('Upload Images'),
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Text('Upload Images of Flooding and Landslides in your area', style: TextStyle(fontSize: 19),),
+            ),
             TextButton(
               onPressed: () => pickImage(),
-              child: Text('Launch Camera'),
+              child: Text('Launch Camera', style: TextStyle(fontSize: 19),),
             ),
-            image!= null ? Image.file(image!, width: 160, height: 160,) : Icon(Icons.add_a_photo)
+            image!= null ? Image.file(image!, width: 160, height: 160,) : Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Icon(Icons.add_a_photo),
+            )
           ],
         ),
 
