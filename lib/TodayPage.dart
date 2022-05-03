@@ -19,6 +19,10 @@ class _TodayPageState extends State<TodayPage> {
   bool loading = true;
   final _dataService = GetData();
   WeatherResponse? _response;
+  final floodUri = Uri.https('sdgp-cs4.herokuapp.com', '/getFloodPrediction');
+
+  Future<String>? predictionFuture;
+  http.Response? floodPrediction;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +79,19 @@ class _TodayPageState extends State<TodayPage> {
                         child: Text('Based on the past data we have gathered around this location there is a',
                           style: TextStyle(fontSize: 20),),
                       ),
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(15.0),
-                        child: Text('High Risk of Flooding', style: TextStyle(fontSize: 20),),
+                        child: FutureBuilder(
+                          future: predictionFuture,
+                          builder: (context,snapshot) {
+                            if(snapshot.hasData) {
+                              Object? prediction = snapshot.data;
+                              return Text(prediction.toString(), style: TextStyle(fontSize: 20),);
+                            } else {
+                              return const CircularProgressIndicator();
+                            }
+                          }
+                        )
                       ),
                     ],
                   ),
@@ -95,11 +109,15 @@ class _TodayPageState extends State<TodayPage> {
     print(_response.toString());
   }
 
-  void getFloodPred() async {
-    final uri = Uri.https(
-        'api.openweathermap.org', '/data/2.5/weather');
+  Future<String> getFloodPred() async {
+    floodPrediction = await http.get(floodUri);
 
-    final response = await http.get(uri);
+
+    if(floodPrediction?.statusCode == 200) {
+      return floodPrediction!.body;
+    } else {
+      throw 'Cannot connect to flood api';
+    }
   }
 
   @override
@@ -107,6 +125,7 @@ class _TodayPageState extends State<TodayPage> {
     super.initState();
     setState(() => loading = true);
     _search();
+    predictionFuture = getFloodPred();
   }
 }
 
